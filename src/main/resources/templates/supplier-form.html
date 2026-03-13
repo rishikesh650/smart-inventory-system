@@ -1,0 +1,63 @@
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::#supplier_form_content})}">
+
+<body>
+    <div id="supplier_form_content">
+        <div class="card" style="max-width: 800px; margin: 0 auto;">
+            <p style="color: var(--text-muted); margin-bottom: 2rem;">Register a new vendor or update existing supplier
+                profiles.</p>
+
+            <form th:action="@{/suppliers/save}" th:object="${supplier}" method="post">
+                <input type="hidden" th:field="*{id}" />
+
+                <div class="form-group">
+                    <label>Legal Entity Name</label>
+                    <input type="text" th:field="*{name}" class="form-control" required
+                        placeholder="e.g. Global Logistics Corp" />
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
+                    <div class="form-group">
+                        <label>Primary Contact Person</label>
+                        <input type="text" th:field="*{contactPerson}" class="form-control" required
+                            placeholder="Full Name" />
+                    </div>
+                    <div class="form-group">
+                        <label>Business Email Address</label>
+                        <input type="email" th:field="*{email}" class="form-control" required
+                            placeholder="procurement@vendor.com" />
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="text" th:field="*{phone}" class="form-control" required
+                            placeholder="+1 (555) 000-0000" />
+                    </div>
+                    <div class="form-group">
+                        <label>Service Category</label>
+                        <select th:field="*{category.id}" class="form-control">
+                            <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}"></option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 1.5rem;">
+                    <label>Registered Business Address</label>
+                    <textarea th:field="*{address}" class="form-control" rows="3"
+                        placeholder="Street, City, State, ZIP"></textarea>
+                </div>
+
+                <div
+                    style="display: flex; gap: 1rem; margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
+                    <button type="submit" class="btn btn-primary" style="flex: 1; justify-content: center;">Save
+                        Supplier Profile</button>
+                    <a th:href="@{/suppliers}" class="btn"
+                        style="background: #f1f5f9; color: var(--text-primary); text-decoration: none; display: flex; align-items: center; justify-content: center;">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

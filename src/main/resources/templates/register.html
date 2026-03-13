@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account | SmartInv</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        body {
+            background: #0f172a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .auth-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 400px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="auth-card">
+        <h2>Simple Registration Test</h2>
+        <div th:if="${error}" style="color: red; margin-bottom: 1rem;" th:text="${error}"></div>
+
+        <form th:action="@{/register}" th:object="${user}" method="post">
+            <div style="margin-bottom: 1rem;">
+                <label>Full Name</label>
+                <input type="text" th:field="*{fullName}" style="width: 100%; padding: 0.5rem;" required>
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <label>Username</label>
+                <input type="text" th:field="*{username}" style="width: 100%; padding: 0.5rem;" required>
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <label>Password</label>
+                <input type="password" th:field="*{password}" style="width: 100%; padding: 0.5rem;" required>
+            </div>
+            <div style="margin-bottom: 1rem;">
+                <label>Email</label>
+                <input type="email" th:field="*{email}" style="width: 100%; padding: 0.5rem;" required>
+            </div>
+            <button type="submit"
+                style="width: 100%; padding: 1rem; background: blue; color: white; border: none; border-radius: 0.5rem;">
+                Initialize Account
+            </button>
+        </form>
+
+        <div style="margin-top: 1rem; text-align: center;">
+            <a th:href="@{/login}">Back to Login</a>
+        </div>
+    </div>
+</body>
+
+</html>

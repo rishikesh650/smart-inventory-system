@@ -1,0 +1,72 @@
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::#products_content})}">
+
+<body>
+    <div id="products_content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <p style="color: var(--text-secondary);">Manage your product inventory and stock levels.</p>
+            <a th:href="@{/products/add}" class="btn btn-primary">
+                <span>+</span> Add New Product
+            </a>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product Details</th>
+                        <th>Category</th>
+                        <th>Supplier</th>
+                        <th>Unit Price</th>
+                        <th>Stock Level</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="product : ${products}">
+                        <td>
+                            <div style="font-weight: 600;" th:text="${product.name}">Product Name</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);" th:text="${product.sku}">SKU-001
+                            </div>
+                        </td>
+                        <td th:text="${product.category != null ? product.category.name : 'Uncategorized'}">Category
+                        </td>
+                        <td th:text="${product.supplier != null ? product.supplier.name : 'No Supplier'}">Supplier</td>
+                        <td th:text="${'$' + product.unitPrice}">$0.00</td>
+                        <td>
+                            <div th:if="${product.inventory != null}">
+                                <div style="font-weight: 700;" th:text="${product.inventory.currentStock}">0</div>
+                                <div class="stat-trend"
+                                    th:classappend="${product.inventory.currentStock <= product.reorderThreshold ? 'trend-down' : 'trend-up'}">
+                                    <span
+                                        th:text="${product.inventory.currentStock <= product.reorderThreshold ? '⚠️ Below Threshold' : '✓ Sufficient'}"></span>
+                                </div>
+                            </div>
+                            <div th:if="${product.inventory == null}"
+                                style="color: var(--text-muted); font-style: italic;">No Inventory</div>
+                        </td>
+                        <td>
+                            <div th:if="${product.inventory != null}">
+                                <span class="badge"
+                                    th:classappend="${product.inventory.currentStock <= product.minStockLevel ? 'badge-critical' : (product.inventory.currentStock <= product.reorderThreshold ? 'badge-warning' : 'badge-normal')}"
+                                    th:text="${product.inventory.currentStock <= product.minStockLevel ? 'CRITICAL' : (product.inventory.currentStock <= product.reorderThreshold ? 'WARNING' : 'IN STOCK')}">
+                                </span>
+                            </div>
+                            <span th:if="${product.inventory == null}" class="badge badge-normal">UNKNOWN</span>
+                        </td>
+                        <td>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <a th:href="@{/products/edit/{id}(id=${product.id})}" class="btn"
+                                    style="background: #f1f5f9; color: var(--text-primary); padding: 0.4rem 0.8rem;">Edit</a>
+                                <a th:href="@{/products/delete/{id}(id=${product.id})}" class="btn"
+                                    style="background: #fff1f2; color: #e11d48; padding: 0.4rem 0.8rem;">Delete</a>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>

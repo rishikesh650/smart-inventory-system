@@ -1,0 +1,60 @@
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::#orders_content})}">
+
+<body>
+    <div id="orders_content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem;">
+            <p style="color: var(--text-secondary);">Track and manage all purchase orders and procurement workflows.</p>
+            <a th:href="@{/admin/orders/add}" class="btn btn-primary">
+                <span>📑</span> Create New PO
+            </a>
+        </div>
+
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Supplier</th>
+                        <th>Status</th>
+                        <th>Amount</th>
+                        <th>Order Date</th>
+                        <th>Exp. Delivery</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="order : ${orders}">
+                        <td>
+                            <div style="font-weight: 700;">#PO-<span th:text="${order.id}">000</span></div>
+                        </td>
+                        <td th:text="${order.supplier != null ? order.supplier.name : 'Unknown Supplier'}">Supplier</td>
+                        <td>
+                            <span th:if="${order.status != null}" class="badge"
+                                th:classappend="${order.status.name() == 'PENDING' ? 'badge-warning' : (order.status.name() == 'RECEIVED' ? 'badge-normal' : 'badge-overstock')}"
+                                th:text="${order.status}">PENDING</span>
+                            <span th:if="${order.status == null}" class="badge badge-normal">UNKNOWN</span>
+                        </td>
+                        <td style="font-weight: 600;"
+                            th:text="${order.totalAmount != null ? '$' + order.totalAmount : '$0.00'}">$0.00</td>
+                        <td
+                            th:text="${order.orderDate != null ? #temporals.format(order.orderDate, 'MMM dd, yyyy') : 'N/A'}">
+                            Date</td>
+                        <td
+                            th:text="${order.expectedDeliveryDate != null ? #temporals.format(order.expectedDeliveryDate, 'MMM dd, yyyy') : 'N/A'}">
+                            Date</td>
+                        <td>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button class="btn"
+                                    style="background: #f1f5f9; padding: 0.4rem 0.8rem;">Details</button>
+                                <button th:if="${order.status.name() == 'PENDING'}" class="btn btn-primary"
+                                    style="padding: 0.4rem 0.8rem;">Approve</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+
+</html>

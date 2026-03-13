@@ -1,0 +1,69 @@
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::#product_form_content})}">
+
+<body>
+    <div id="product_form_content">
+        <div class="card" style="max-width: 800px; margin: 0 auto;">
+            <form th:action="@{/products/save}" th:object="${product}" method="post">
+                <input type="hidden" th:field="*{id}" />
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;">
+                    <div class="form-group">
+                        <label>Product Name</label>
+                        <input type="text" th:field="*{name}" class="form-control"
+                            placeholder="e.g. Enterprise Processor X1" required />
+                    </div>
+                    <div class="form-group">
+                        <label>SKU (Stock Keeping Unit)</label>
+                        <input type="text" th:field="*{sku}" class="form-control" placeholder="PRD-XXXX" required />
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 1.5rem;">
+                    <label>Description</label>
+                    <textarea th:field="*{description}" class="form-control" rows="3"
+                        placeholder="Detailed product specifications..."></textarea>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
+                    <div class="form-group">
+                        <label>Category</label>
+                        <select th:field="*{category.id}" class="form-control">
+                            <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}"></option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Primary Supplier</label>
+                        <select th:field="*{supplier.id}" class="form-control">
+                            <option th:each="sup : ${suppliers}" th:value="${sup.id}" th:text="${sup.name}"></option>
+                        </select>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 1rem; margin-top: 1.5rem;">
+                    <div class="form-group">
+                        <label>Unit Price ($)</label>
+                        <input type="number" step="0.01" th:field="*{unitPrice}" class="form-control" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Reorder Threshold</label>
+                        <input type="number" th:field="*{reorderThreshold}" class="form-control" required />
+                    </div>
+                    <div class="form-group">
+                        <label>Lead Time (Days)</label>
+                        <input type="number" th:field="*{leadTimeDays}" class="form-control" required />
+                    </div>
+                </div>
+
+                <div
+                    style="display: flex; gap: 1rem; margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
+                    <button type="submit" class="btn btn-primary" style="flex: 1; justify-content: center;">Save Product
+                        Configuration</button>
+                    <a th:href="@{/products}" class="btn"
+                        style="background: #f1f5f9; color: var(--text-primary); text-decoration: none; display: flex; align-items: center; justify-content: center;">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

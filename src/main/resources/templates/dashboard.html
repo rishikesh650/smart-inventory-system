@@ -1,0 +1,130 @@
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::#dashboard_content})}">
+
+<body>
+    <div id="dashboard_content">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2.5rem;">
+            <div>
+                <h1 style="font-weight: 800; font-size: 2.25rem; letter-spacing: -0.025em;">Welcome, <span
+                        sec:authentication="name" style="color: var(--primary);">User</span>!</h1>
+                <p style="color: var(--text-secondary); margin-top: 0.5rem;">Enterprise intelligence and real-time
+                    inventory oversight.</p>
+            </div>
+            <div
+                style="background: rgba(255,255,255,0.05); padding: 0.75rem 1.25rem; border-radius: 1rem; border: 1px solid var(--border); text-align: right;">
+                <p
+                    style="font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 0.25rem;">
+                    Authorized Scope</p>
+                <div sec:authorize="hasRole('ADMIN')"
+                    style="color: var(--primary); font-weight: 700; font-size: 0.875rem;">SYSTEM ADMINISTRATOR</div>
+                <div sec:authorize="hasRole('MANAGER')"
+                    style="color: var(--warning); font-weight: 700; font-size: 0.875rem;">INVENTORY MANAGER</div>
+                <div sec:authorize="hasRole('STAFF')"
+                    style="color: var(--success); font-weight: 700; font-size: 0.875rem;">OPERATIONAL STAFF</div>
+            </div>
+        </div>
+
+        <!-- Key Metrics Row -->
+        <div class="stat-grid">
+            <div class="card stat-card">
+                <p class="stat-label">Total Inventory</p>
+                <p class="stat-value" th:text="${totalProducts}">0</p>
+                <p class="stat-trend trend-up"><span>↑</span> 12% from last month</p>
+            </div>
+            <div class="card stat-card">
+                <p class="stat-label">Risk Level: High</p>
+                <p class="stat-value text-danger" th:text="${lowStockAlerts}">0</p>
+                <p class="stat-trend">Items below reorder point</p>
+            </div>
+            <div class="card stat-card">
+                <p class="stat-label">Procurement Orders</p>
+                <p class="stat-value" style="color: var(--info);">5</p>
+                <p class="stat-trend">3 Pending Approval</p>
+            </div>
+        </div>
+
+        <!-- Visualization Row -->
+        <div class="viz-grid">
+            <div class="card">
+                <h3 style="margin-bottom: 1.5rem;">Stock Levels vs. Reorder Points</h3>
+                <canvas id="stockChart" height="100"></canvas>
+            </div>
+            <div class="card">
+                <h3 style="margin-bottom: 1.5rem;">Stockout Risk</h3>
+                <div style="padding: 1rem; text-align: center;">
+                    <p style="font-size: 0.875rem; color: var(--text-secondary);">Critical Stockout Probability</p>
+                    <p style="font-size: 3rem; font-weight: 800; color: var(--danger);">14%</p>
+                    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 1rem;">Based on current daily
+                        usage trends and lead times.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detail Table -->
+        <div class="table-container">
+            <div
+                style="padding: 1.5rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center;">
+                <h3 style="font-weight: 700;">Inventory Intelligence Report</h3>
+                <a th:href="@{/reports/inventory/export}" class="btn btn-primary"
+                    style="padding: 0.5rem 1rem; text-decoration: none;">Export Report</a>
+            </div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Product Interface</th>
+                        <th>Availability</th>
+                        <th>Avg. Daily Consumption</th>
+                        <th>Runway (Days)</th>
+                        <th>System Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="p : ${predictions}">
+                        <td>
+                            <div style="font-weight: 600;" th:text="${p.productName}">Product</div>
+                            <div style="font-size: 0.75rem; color: var(--text-muted);">SKU: PRD-001</div>
+                        </td>
+                        <td th:text="${p.currentStock}">0</td>
+                        <td th:text="${#numbers.formatDecimal(p.dailyUsage, 1, 2)}">0.00</td>
+                        <td th:text="${p.estimatedDaysLeft}">0</td>
+                        <td>
+                            <span th:if="${p.alertLevel != null}"
+                                th:class="'badge badge-' + ${p.alertLevel.toLowerCase()}"
+                                th:text="${p.alertLevel}">Normal</span>
+                            <span th:if="${p.alertLevel == null}" class="badge badge-normal">NORMAL</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <script th:inline="javascript">
+            const predictions = /*[[${predictions}]]*/[];
+
+            const ctx = document.getElementById('stockChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: predictions.slice(0, 10).map(p => p.productName),
+                    datasets: [{
+                        label: 'Current Stock',
+                        data: predictions.slice(0, 10).map(p => p.currentStock),
+                        backgroundColor: 'rgba(99, 102, 241, 0.8)',
+                        borderRadius: 4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: { beginAtZero: true, grid: { display: false } },
+                        x: { grid: { display: false } }
+                    }
+                }
+            });
+        </script>
+    </div>
+</body>
+
+</html>

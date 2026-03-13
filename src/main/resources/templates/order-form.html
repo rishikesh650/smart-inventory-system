@@ -1,0 +1,54 @@
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: layout(~{::#order_form_content})}">
+
+<body>
+    <div id="order_form_content">
+        <div class="card" style="max-width: 800px; margin: 0 auto;">
+            <p style="color: var(--text-muted); margin-bottom: 2rem;">Initiate a new procurement request. The system
+                will track this through the approval workflow.</p>
+
+            <form th:action="@{/admin/orders/save}" th:object="${order}" method="post">
+                <div class="form-group">
+                    <label>Target Supplier</label>
+                    <select th:field="*{supplier.id}" class="form-control" style="padding: 0.75rem;">
+                        <option value="">Select an approved supplier...</option>
+                        <option th:each="sup : ${suppliers}" th:value="${sup.id}" th:text="${sup.name}"></option>
+                    </select>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-top: 1.5rem;">
+                    <div class="form-group">
+                        <label>Order Date</label>
+                        <input type="datetime-local" th:field="*{orderDate}" class="form-control" />
+                    </div>
+                    <div class="form-group">
+                        <label>Expected Delivery</label>
+                        <input type="datetime-local" th:field="*{expectedDeliveryDate}" class="form-control" />
+                    </div>
+                </div>
+
+                <div class="form-group" style="margin-top: 1.5rem;">
+                    <label>Total Estimated Amount ($)</label>
+                    <input type="number" step="0.01" th:field="*{totalAmount}" class="form-control"
+                        placeholder="0.00" />
+                </div>
+
+                <div
+                    style="background: #f8fafc; border: 1px dashed var(--border); border-radius: var(--radius); padding: 2rem; margin-top: 2rem; text-align: center;">
+                    <p style="font-size: 0.875rem; color: var(--text-muted);">PO Items and Line Detail Configuration
+                        would be expanded here in production. Currently creating a header-level procurement record.</p>
+                </div>
+
+                <div
+                    style="display: flex; gap: 1rem; margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border);">
+                    <button type="submit" class="btn btn-primary" style="flex: 1; justify-content: center;">Generate
+                        Purchase Order</button>
+                    <a th:href="@{/admin/orders}" class="btn"
+                        style="background: #f1f5f9; color: var(--text-primary); text-decoration: none; display: flex; align-items: center; justify-content: center;">Discard
+                        Draft</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>
