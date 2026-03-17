@@ -24,6 +24,26 @@
                         <input type="number" id="quantity" name="quantity" class="form-control" min="1" required
                             style="width: 100%; padding: 0.75rem; border-radius: var(--radius); border: 1px solid var(--border);">
                     </div>
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label for="paymentMethod">Payment Method</label>
+                        <select id="paymentMethod" name="paymentMethod" class="form-control"
+                            style="width: 100%; padding: 0.75rem; border-radius: var(--radius); border: 1px solid var(--border);">
+                            <option value="CASH">Cash</option>
+                            <option value="CARD">Card</option>
+                            <option value="UPI">UPI</option>
+                            <option value="BANK_TRANSFER">Bank Transfer</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="margin-bottom: 1.5rem;">
+                        <label for="paymentStatus">Payment Status</label>
+                        <select id="paymentStatus" name="paymentStatus" class="form-control"
+                            style="width: 100%; padding: 0.75rem; border-radius: var(--radius); border: 1px solid var(--border);">
+                            <option value="COMPLETED">Completed</option>
+                            <option value="PENDING">Pending</option>
+                            <option value="FAILED">Failed</option>
+                            <option value="REFUNDED">Refunded</option>
+                        </select>
+                    </div>
                     <button type="submit" class="btn btn-primary"
                         style="width: 100%; justify-content: center; padding: 1rem;">
                         Record Transaction
@@ -53,12 +73,24 @@
                         <th>Quantity</th>
                         <th>Unit Price</th>
                         <th>Total Amount</th>
+                        <th>Payment Method</th>
+                        <th>Status</th>
                     </tr>
                 </thead>
                 <tbody>
                     <!-- Recent sales logic would go here if provided in model -->
-                    <tr>
-                        <td colspan="5" style="text-align: center; color: var(--text-muted); padding: 3rem;">
+                    <tr th:each="sale : ${sales}" th:if="${sales != null}">
+                        <td th:text="${#temporals.format(sale.saleDate, 'dd MMM yyyy HH:mm')}">Date</td>
+                        <td th:text="${sale.product.name}">Product</td>
+                        <td th:text="${sale.quantity}">Quantity</td>
+                        <td th:text="${'$' + sale.unitPrice}">Unit Price</td>
+                        <td th:text="${'$' + sale.totalPrice}" style="font-weight: bold;">Total Amount</td>
+                        <td th:text="${sale.paymentMethod != null ? sale.paymentMethod : 'N/A'}">Method</td>
+                        <td th:text="${sale.paymentStatus != null ? sale.paymentStatus : 'N/A'}" 
+                            th:style="${sale.paymentStatus?.name() == 'COMPLETED' ? 'color: var(--success);' : (sale.paymentStatus == null ? 'color: var(--text-muted);' : 'color: var(--warning);')}">Status</td>
+                    </tr>
+                    <tr th:if="${sales == null or #lists.isEmpty(sales)}">
+                        <td colspan="7" style="text-align: center; color: var(--text-muted); padding: 3rem;">
                             Live transaction feed initialized. Data will populate as sales are recorded.
                         </td>
                     </tr>

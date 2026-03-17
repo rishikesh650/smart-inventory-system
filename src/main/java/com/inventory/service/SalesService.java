@@ -12,6 +12,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
+import com.inventory.entity.PaymentMethod;
+import com.inventory.entity.PaymentStatus;
 
 @Service
 public class SalesService {
@@ -25,7 +27,7 @@ public class SalesService {
     private AuditLogService auditLogService;
 
     @Transactional
-    public Sale recordSale(Long productId, int quantity) {
+    public Sale recordSale(Long productId, int quantity, PaymentMethod paymentMethod, PaymentStatus paymentStatus) {
         Product product = productRepository.findById(productId).orElseThrow();
         Inventory inventory = inventoryRepository.findByProductId(productId).orElseThrow();
 
@@ -44,6 +46,8 @@ public class SalesService {
         sale.setUnitPrice(product.getUnitPrice());
         sale.setTotalPrice(product.getUnitPrice().multiply(BigDecimal.valueOf(quantity)));
         sale.setSaleDate(LocalDateTime.now());
+        sale.setPaymentMethod(paymentMethod);
+        sale.setPaymentStatus(paymentStatus);
 
         Sale savedSale = saleRepository.save(sale);
         auditLogService.logAction("system", "SALE_RECORDED",
@@ -54,6 +58,10 @@ public class SalesService {
 
     public List<Sale> getSalesInRange(LocalDateTime start, LocalDateTime end) {
         // Simple implementation for demo
+        return saleRepository.findAll();
+    }
+
+    public List<Sale> getAllSales() {
         return saleRepository.findAll();
     }
 }
